@@ -30,7 +30,7 @@ $(document).on("click", ".update-cart",function(e){
     let product_id = $(this).data("index")
     $.ajax({
         type: "POST",
-        url: "../carts/update/",
+        url: "/api/site/cart/update/",
         data: {
             product_id : product_id,
             qty_update: $(`#inp-id-${product_id}`).val(),
@@ -55,7 +55,7 @@ $(document).on("click", ".remove-cart",function(e){
     let product_id = $(this).data("index")
     $.ajax({
         type: "POST",
-        url: "../carts/delete/",
+        url: "/api/site/cart/delete/",
         data: {
             product_id : product_id,
             csrfmiddlewaretoken: getCSRFToken(),

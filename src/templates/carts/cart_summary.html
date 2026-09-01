@@ -32,7 +32,7 @@
             {% for product in cart_products %}
             <tr class="bg-white border-b hover:bg-gray-50 grid grid-cols-1 justify-items-center md:table-row">
               <td class="p-4">
-                <img src="{{ product.images.all.0.image.url }}" class="w-48 md:w-32 max-w-full max-h-full rounded-lg" alt="تصویر محصول">
+                <img src="{{ product.images.all.0.image.image.url }}" class="w-48 md:w-32 max-w-full max-h-full rounded-lg" alt="تصویر محصول">
               </td>
               <td class="md:pr-6 py-4 text-sm opacity-90 text-gray-900">
                 {{product.category}}
@@ -54,10 +54,10 @@
                 </div>
               </td>
               <td class="px-6 py-4 text-sm opacity-90 text-gray-900">
-                {% if product.is_offer %}
-                  {{product.offer_price}}
+                {% if product.stockrecords.all.0.in_offer %}
+                  {{product.stockrecords.all.0.offer_price}}
                 {% else %}
-                  {{product.price}}
+                  {{product.stockrecords.all.0.sale_price}}
                 {% endif %}
                  تومان
               </td>

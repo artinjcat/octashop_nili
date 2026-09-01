@@ -38,8 +38,13 @@
           </div>
         {% else %}
           <div class="flex justify-end mb-2 text-sm opacity-80 pl-3 md:pl-0">
-            <div>{{ product.stockrecords.first.sale_price }}</div>
-            <div>تومان</div>
+            {% if product.stockrecords.first.sale_price %}
+              <div>{{ product.stockrecords.first.sale_price }}</div>
+              <div>تومان</div>
+             {% else %}
+                            <div>ناموجود</div>
+
+            {% endif %}
           </div>
 
           <div class="flex justify-end text-xs opacity-75 pl-3 md:pl-0">
@@ -48,7 +53,17 @@
           </div>
         {% endif %}
         <br />
-        <span class="flex justify-center items-center opacity-90"><button class="px-7 py-2 text-center text-white bg-red-500 align-middle border-0 rounded-lg shadow-md text-sm">افزودن به سبد</button></span>
+        <span class="flex justify-center items-center opacity-90">
+          {% if product.stockrecords.first.in_offer %}
+            <button class="px-7 py-2 text-center text-white bg-red-500 align-middle border-0 rounded-lg shadow-md text-sm">
+              افزودن به سبد
+            </button>
+          {% else %}
+            <button class="px-7 py-2 text-center text-white bg-gray-500 align-middle border-0 rounded-lg shadow-md text-sm" disabled>
+              افزودن به سبد
+            </button>
+          {% endif %}
+        </span>
       </div>
     </a>
   {% endfor %}

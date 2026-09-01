@@ -1,7 +1,7 @@
 from django.db import models
 from treebeard.mp_tree import MP_Node
 from django.utils.translation import gettext_lazy as _
-from django.utils.html import mark_safe
+from django.utils.safestring import mark_safe
 from apps.catalogs.managers import CategoryManager
 
 from libs.db.fields import UpperCaseCharField
@@ -188,11 +188,23 @@ class Product(AuditableModel):
 
 
 class ProductAttributeValue(models.Model):
+    
+    class UnitChoice(models.TextChoices):
+        GRAM = 'گرم', _("گرم")
+        KILOGRAM = 'کیلوگرم', _("کیلوگرم")
+        LITER = 'لیتر', _("لیتر")
+        MILLILITER = 'میلی‌لیتر', _("میلی‌لیتر")
+        PIECE = 'عدد', _("عدد")
+        METER = 'متر', _("متر")
+        CENTIMETER = 'سانتی‌متر', _("سانتی‌متر")
+        MILLIMETER = 'میلی‌متر', _("میلی‌متر")
     product = models.ForeignKey(
         Product, related_name='attribute_value', on_delete=models.CASCADE)
 
     attribute = models.ForeignKey(
         ProductAttribute, related_name='attribute_value', on_delete=models.CASCADE)
+    
+    unit = models.CharField(_("unit"), max_length=20, choices=UnitChoice.choices, blank=True, null=True)
 
     value_text = models.TextField(_("value text"), blank=True, null=True)
     value_integer = models.IntegerField(
@@ -200,6 +212,8 @@ class ProductAttributeValue(models.Model):
     value_float = models.FloatField(_("value float"), blank=True, null=True)
     value_boolean = models.BooleanField(
         _("value boolean"), blank=True, null=True)
+    # value_option_group = models.ForeignKey(
+    #     OptionGroup, related_name='attribute_value', on_delete=models.PROTECT, blank=True, null=True)
     value_option = models.ForeignKey(
         OptionGroupValue, related_name='attribute_value', on_delete=models.PROTECT, blank=True, null=True)
     value_multi_option = models.ManyToManyField(
@@ -209,6 +223,32 @@ class ProductAttributeValue(models.Model):
         verbose_name = 'attribute value'
         verbose_name_plural = 'attribute values'
         unique_together = ('product', 'attribute')
+        
+    def __str__(self):
+        return f"{self.product.title} - {self.attribute.title}"
+    
+    def get_value_display(self):
+        match self.attribute.type:
+            case ProductAttribute.AttributeTypeChoice.TEXT:
+                
+                return f"{self.value_text} {self.unit if hasattr(self.attribute, 'unit') else ''}"
+            case ProductAttribute.AttributeTypeChoice.BOOLEAN:
+                return self.value_boolean
+            case ProductAttribute.AttributeTypeChoice.INTEGER:
+                return f"{self.value_integer} {self.attribute.unit if hasattr(self.attribute, 'unit') else ''}"
+            
+            case ProductAttribute.AttributeTypeChoice.FLOAT:
+                return f"{self.value_float} {self.unit }"
+            case ProductAttribute.AttributeTypeChoice.DATE:
+                return self.value_text
+            case ProductAttribute.AttributeTypeChoice.DATETIME:
+                return self.value_text
+            # case ProductAttribute.AttributeTypeChoice.OPTION_GROUP:
+            #     return self.value_option_group
+            case ProductAttribute.AttributeTypeChoice.MULTI_OPTION:
+                return self.value_multi_option
+            case ProductAttribute.AttributeTypeChoice.OPTION:
+                return self.value_option
 
 
 class ProductRecommendation(models.Model):

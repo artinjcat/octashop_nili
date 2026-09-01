@@ -2,7 +2,7 @@ $(document).on("click","#add-cart",function(e){
     e.preventDefault()
     $.ajax({
         type: "POST",
-        url: "../carts/add/",
+        url: "/api/site/cart/add/",
         data: {
             product_id : $(this).val(),
             "qty-to-cart": $("#qty-to-cart").val(),
