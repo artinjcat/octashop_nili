@@ -3,6 +3,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.forms import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
@@ -30,7 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=64, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    old_cart = models.TextField(blank=True, null=True)
+    old_cart = models.CharField(_("Shopping cart"), max_length=200, null=True, blank=True)
     
     objects = UserManager()
 
@@ -48,6 +49,7 @@ class Profile(models.Model):
     referred_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='referred_profiles')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    old_cart = models.CharField(_("Shopping cart"), max_length=200, null=True, blank=True)
 
 
     def __str__(self):

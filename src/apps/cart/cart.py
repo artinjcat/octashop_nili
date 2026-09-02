@@ -118,7 +118,7 @@ class Cart():
         
         if self.request.user.is_authenticated:
             # Get the current user profile:
-            current_user = User.objects.filter(user__id = self.request.user.id)
+            current_user = User.objects.filter(id = self.request.user.id)
             carty = str(self.cart)
             carty = carty.replace("\'","\"")
             # Save carty to the Customer Model:
